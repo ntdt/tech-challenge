@@ -5,8 +5,8 @@ build:
 	DOCKER_BUILDKIT=1 docker build -t ntdt/tech-challenge . && docker push ntdt/tech-challenge
 
 .PHONY: run
-run:
-	docker run -ti --rm --mount type=bind,src=$(pwd)/ds,dst=/data --mount type=bind,src=$(pwd)/out,dst=/output tech-challenge
+test-image:
+	docker run -ti --rm --mount type=bind,src=$(pwd)/ds,dst=/dataset --mount type=bind,src=$(pwd)/out,dst=/output tech-challenge
 
 .PHONY: init plan apply upload download ssh
 init:
@@ -21,3 +21,5 @@ download:
 	$(shell terraform output rsync_download_cmd)
 ssh:
 	$(shell terraform output  ssh_connection_string)
+run:
+	$(shell kubectl apply -f specs)
