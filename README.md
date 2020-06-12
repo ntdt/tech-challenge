@@ -1,29 +1,40 @@
-# EKS application deployments
+# Parallel jobs to process images
 
-Provisionning EKS with terraform then deploy jobs
+This is a system that provision needed infrastructure and launch jobs parallelly to process images.
+In order to speed up the process, many workers are used and the dataset of images need to be divided to equal part for each worker. The filesystem choosen need to be shared to each worker and it should provide a way for user interaction.
 
-AWS EFS is used to store images and share to workers jobs.
+## Analyse and technologies
 
-Images are distributed in folders whose number is equal to number of workers.
+- EKS to launch k8s Jobs
 
-An EC2 instance with a NFS mount to EFS is used to prepare images and provide interaction with user.
+- EFS is used to share the dataset of images to Jobs
+
+- An EC2 instance with SSH access is used to provide the interaction with users for upload dataset and download results.
+
+- Terraform to provision AWS resources: EC2, EKS, EFS, VPC
+
+- Terraform to provision SSH access, k8s manifest templating
+
+- Shell scripts to prepare dataset and divide it to equal parts for each worker
+
+- Makefile to simplify the commands
 
 ## Parameters
 
-Edit terraform.tfvars to specify the number of *worker_count*, *region* and *vpc_cidr*
+Edit `terraform.tfvars` to specify the number of `worker_count`, `region` and `vpc_cidr`
 
 ## Use make for tasks:
 
-- *make build*: build docker image and push to docker hub
+- `make build`: build docker image and push to docker hub
 
-- *make init*: initialize terraform
+- `make init`: initialize terraform
 
-- *make plan*: terraform plan
+- `make plan`: terraform plan
 
-- *make apply*: terraform apply
+- `make apply`: terraform apply
 
-- *make upload*: upload images to filestore EC2 instance
+- `make upload`: upload images to filestore EC2 instance
 
-- *make run*: launch Jobs to process images
+- `make run`: launch Jobs to process images
 
-- *make download*: download images processed to *result*
+- `make download`: download images processed to *result*
