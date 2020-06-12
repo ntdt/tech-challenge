@@ -165,7 +165,7 @@ data "template_cloudinit_config" "config" {
 }
 
 data "template_file" "cloud_config" {
-  template = file("${path.module}/data/cloud_config.yaml")
+  template = file("${path.module}/templates/cloud_config.yaml")
 
   vars = {
     EFS_DNS_NAME = "${module.efs.dns_name}"
