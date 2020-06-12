@@ -19,6 +19,8 @@ In order to speed up the process, many workers are used and the dataset of image
 
 - Makefile to simplify the commands
 
+- Prometheus for metrics and monitoring
+
 ## Parameters
 
 Edit `terraform.tfvars` to specify the number of `worker_count`, `region` and `vpc_cidr`

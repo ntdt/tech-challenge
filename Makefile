@@ -11,15 +11,36 @@ test-image:
 .PHONY: init plan apply upload download ssh
 init:
 	terraform init
+
 plan:
 	terraform plan -out tfplan.out
+
 apply:
 	terraform apply tfplan.out
+
 upload:
 	$(shell terraform output rsync_upload_cmd)
+
 download:
 	$(shell terraform output rsync_download_cmd)
+
 ssh:
 	$(shell terraform output  ssh_connection_string)
+
 run:
 	$(shell kubectl apply -f specs)
+
+.PHONY: prepare_prometheus prometheus
+prepare_prometheus:
+	kubectl create namespace prometheus
+	helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+	helm repo update
+
+prometheus:
+	helm install prometheus stable/prometheus \
+	    --namespace prometheus \
+	    --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
+
+dashboard:
+	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
