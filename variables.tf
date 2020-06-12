@@ -8,3 +8,8 @@ variable "vpc_cidr" {
   description = "i.e.: 10.0.0.0/16"
   default     = null
 }
+
+variable "worker_count" {
+  type        = number
+  description = "Number of workers"
+}
