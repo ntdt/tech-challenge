@@ -144,9 +144,31 @@ module "ec2_instance" {
   monitoring             = true
   vpc_security_group_ids = [module.ssh_sg.this_security_group_id]
   subnet_id              = module.vpc.public_subnets[0]
+  user_data_base64       = data.template_cloudinit_config.config.rendered
 
   tags = {
     Terraform   = "true"
     Environment = "tnguyen"
+  }
+}
+
+
+data "template_cloudinit_config" "config" {
+  gzip          = true
+  base64_encode = true
+
+  # Main cloud-config configuration file.
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = data.template_file.cloud_config.rendered
+  }
+}
+
+data "template_file" "cloud_config" {
+  template = file("${path.module}/data/cloud_config.yaml")
+
+  vars = {
+    EFS_DNS_NAME = "${module.efs.dns_name}:/"
   }
 }
