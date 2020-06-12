@@ -152,7 +152,6 @@ module "ec2_instance" {
   }
 }
 
-
 data "template_cloudinit_config" "config" {
   gzip          = true
   base64_encode = true
@@ -169,6 +168,6 @@ data "template_file" "cloud_config" {
   template = file("${path.module}/data/cloud_config.yaml")
 
   vars = {
-    EFS_DNS_NAME = "${module.efs.dns_name}:/"
+    EFS_DNS_NAME = "${module.efs.dns_name}"
   }
 }

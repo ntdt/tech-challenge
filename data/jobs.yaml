@@ -1,0 +1,32 @@
+%{ for i in range(1, WORKER_COUNT+1) ~}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job${i}
+  labels:
+    jobgroup: process-images
+spec:
+  template:
+    metadata:
+      name: process-images
+      labels:
+        jobgroup: process-images
+    spec:
+      containers:
+        - name: job
+          image: ntdt/tech-challenge
+          volumeMounts:
+            - name: persistent-storage
+              mountPath: /data
+          env:
+            - name: DATASET
+              value: /data/dataset/bucket${i}
+            - name: OUTPUT
+              value: /data/result
+      restartPolicy: Never
+      volumes:
+        - name: persistent-storage
+          persistentVolumeClaim:
+            claimName: efs-claim
+%{ endfor ~}
