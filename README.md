@@ -37,6 +37,36 @@ Edit `terraform.tfvars` to specify the number of `worker_count`, `region` and `v
 
 - `make upload`: upload images to filestore EC2 instance
 
+- `make install_csi`: Install AWS EFS CSI driver for k8s cluster
+
 - `make run`: launch Jobs to process images
 
 - `make download`: download images processed to *result*
+
+- `make prepare_prometheus` then `make prometheus` to install Prometheus to ingest metrics from k8s cluster
+
+- `make dashboard` install k8s dashboard
+
+- `make logging` create the logging stack with EFK
+
+## Access to Prometheus
+
+Use kubectl to port forward the Prometheus console to your local machine.
+
+`kubectl --namespace=prometheus port-forward deploy/prometheus-server 9090`
+
+Point a web browser to http://localhost:9090 to view the Prometheus console.
+
+Choose a metric from the - *insert metric at cursor* menu, then choose *Execute*. Choose the *Graph* tab to show the metric over time. The following image shows `container_memory_usage_bytes` over time.
+
+## Access to Dashboard
+
+Use `make dashboard` to install Kubernetes Dashboard Web UI.
+
+Follow this guide to create a service account https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html and access to Dashboard
+
+## Logging with EFK stack
+
+Use `make logging` to provision EFK stack.
+
+Forward port 5601 for Kibana `kubectl port-forward kibana-866c457776-hlzqt 5601:5601 -n kube-logging` then access to http://localhost:5601

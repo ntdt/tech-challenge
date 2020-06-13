@@ -27,6 +27,9 @@ download:
 ssh:
 	$(shell terraform output  ssh_connection_string)
 
+install_csi:
+	$(shell kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master")
+
 run:
 	$(shell kubectl apply -f specs)
 
@@ -44,3 +47,6 @@ prometheus:
 dashboard:
 	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+
+logging:
+	kubectl apply -f logging
