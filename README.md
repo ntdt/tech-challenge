@@ -1,7 +1,12 @@
 # Parallel jobs to process images
 
 This is a system that provision needed infrastructure and launch jobs parallelly to process images.
+
 In order to speed up the process, many workers are used and the dataset of images need to be divided to equal part for each worker. The filesystem choosen need to be shared to each worker and it should provide a way for user interaction.
+
+A simple illustration for the system
+
+![Architecture](architecture.png)
 
 ## Analyse and technologies
 
@@ -20,6 +25,8 @@ In order to speed up the process, many workers are used and the dataset of image
 - Makefile to simplify the commands
 
 - Prometheus for metrics and monitoring
+
+- EFK stack for logging: Elastisearch, Fluentd and Kibana
 
 ## Parameters
 
