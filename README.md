@@ -69,4 +69,7 @@ Follow this guide to create a service account https://docs.aws.amazon.com/eks/la
 
 Use `make logging` to provision EFK stack.
 
-Forward port 5601 for Kibana `kubectl port-forward kibana-866c457776-hlzqt 5601:5601 -n kube-logging` then access to http://localhost:5601
+Forward port 5601 for Kibana:
+
+> `kubectl get pods -n kube-logging` to get the name of the pod kibana
+> `kubectl port-forward kibana-866c457776-hlzqt 5601:5601 -n kube-logging` then access to http://localhost:5601
