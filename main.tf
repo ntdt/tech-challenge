@@ -110,7 +110,7 @@ resource "tls_private_key" "this" {
 resource "local_file" "ssh_key" {
   content         = tls_private_key.this.private_key_pem
   filename        = "${path.module}/tnguyen.key"
-  file_permission = "0400"
+  file_permission = "0600"
 }
 
 module "key_pair" {
