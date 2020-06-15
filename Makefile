@@ -31,7 +31,7 @@ install_csi:
 	$(shell kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master")
 
 run:
-	$(shell kubectl apply -f specs)
+	$(shell kubectl apply -f specs/)
 
 .PHONY: prepare_prometheus prometheus
 prepare_prometheus:

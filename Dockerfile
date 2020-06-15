@@ -8,6 +8,7 @@ RUN apt-get update && apt-get -y upgrade
 ADD process.py .
 ADD requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+	pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT /usr/local/bin/python process.py $DATASET $OUTPUT
