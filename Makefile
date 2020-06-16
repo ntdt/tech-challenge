@@ -18,6 +18,9 @@ plan:
 apply:
 	terraform apply tfplan.out
 
+update-kubeconfig:
+	$(shell terraform output update_kubeconfig)
+
 upload:
 	$(shell terraform output rsync_upload_cmd)
 
@@ -28,10 +31,10 @@ ssh:
 	$(shell terraform output  ssh_connection_string)
 
 install_csi:
-	$(shell kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master")
+	kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
 
 run:
-	$(shell kubectl apply -f specs/)
+	kubectl apply -f specs/
 
 .PHONY: prepare_prometheus prometheus
 prepare_prometheus:

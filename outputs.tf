@@ -9,3 +9,7 @@ output "rsync_upload_cmd" {
 output "rsync_download_cmd" {
   value = "eval $(ssh-agent) && ssh-add ${local_file.ssh_key.filename} && rsync -az ec2-user@${module.ec2_instance.public_ip[0]}:/mnt/result ."
 }
+
+output "update_kubeconfig" {
+  value = "ams eks --region ${var.region} update-kubeconfig ${module.eks-cluster.cluster_id}"
+}

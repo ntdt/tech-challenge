@@ -30,7 +30,7 @@ A simple illustration for the system
 
 ## Parameters
 
-Edit `terraform.tfvars` to specify the number of `worker_count`, `region` and `vpc_cidr`
+Edit `terraform.tfvars` to specify the number of `worker_count`, `region`, `vpc_cidr` and `namespace` for resources
 
 ## Use make for tasks:
 
@@ -41,6 +41,8 @@ Edit `terraform.tfvars` to specify the number of `worker_count`, `region` and `v
 - `make plan`: terraform plan
 
 - `make apply`: terraform apply
+
+- `make update-kubeconfig`: update kube config for k8s cluster access
 
 - `make upload`: upload images to filestore EC2 instance
 

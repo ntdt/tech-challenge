@@ -28,7 +28,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.39.0"
 
-  name = "tnguyen"
+  name = var.namespace
   cidr = var.vpc_cidr
 
   azs = data.aws_availability_zones.available.names
@@ -41,31 +41,34 @@ module "vpc" {
     cidrsubnet(module.subnet_addrs.network_cidr_blocks["public"], 2, num)
   ]
 
+  single_nat_gateway   = true
   enable_nat_gateway   = true
   enable_dns_hostnames = true
 
   tags = {
     Terraform   = "true"
-    Environment = "tnguyen"
+    Environment = var.namespace
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/tnguyen-cluster" = "shared"
-    "kubernetes.io/role/internal-elb"       = 1
+    "kubernetes.io/cluster/${var.namespace}-cluster" = "shared"
+    "kubernetes.io/role/internal-elb"                = 1
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/tnguyen-cluster" = "shared"
-    "kubernetes.io/role/elb"                = 1
+    "kubernetes.io/cluster/${var.namespace}-cluster" = "shared"
+    "kubernetes.io/role/elb"                         = 1
   }
 }
 
-module "tnguyen-cluster" {
+module "eks-cluster" {
   source          = "terraform-aws-modules/eks/aws"
-  cluster_name    = "tnguyen-cluster"
+  cluster_name    = "${var.namespace}-cluster"
   cluster_version = "1.16"
   subnets         = module.vpc.private_subnets
   vpc_id          = module.vpc.vpc_id
+
+  manage_aws_auth = true
 
   worker_groups = [
     {
@@ -78,13 +81,13 @@ module "tnguyen-cluster" {
 module "efs" {
   source = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.16.0"
 
-  namespace       = "tn"
+  namespace       = "${var.namespace}"
   stage           = "test"
   name            = "app"
   region          = var.region
   vpc_id          = module.vpc.vpc_id
   subnets         = module.vpc.private_subnets
-  security_groups = [module.tnguyen-cluster.worker_security_group_id]
+  security_groups = [module.eks-cluster.worker_security_group_id]
 }
 
 data "aws_ami" "amzn_linux" {
@@ -109,14 +112,14 @@ resource "tls_private_key" "this" {
 
 resource "local_file" "ssh_key" {
   content         = tls_private_key.this.private_key_pem
-  filename        = "${path.module}/tnguyen.key"
+  filename        = "${path.module}/${var.namespace}.key"
   file_permission = "0600"
 }
 
 module "key_pair" {
   source = "terraform-aws-modules/key-pair/aws"
 
-  key_name   = "tnguyen-key"
+  key_name   = "${var.namespace}-key"
   public_key = tls_private_key.this.public_key_openssh
 }
 
@@ -135,7 +138,7 @@ module "ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 2.15.0"
 
-  name           = "tnguyen-filestore"
+  name           = "${var.namespace}-filestore"
   instance_count = 1
 
   ami                    = data.aws_ami.amzn_linux.image_id
@@ -148,7 +151,7 @@ module "ec2_instance" {
 
   tags = {
     Terraform   = "true"
-    Environment = "tnguyen"
+    Environment = "${var.namespace}"
   }
 }
 
