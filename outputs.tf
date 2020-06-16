@@ -11,5 +11,5 @@ output "rsync_download_cmd" {
 }
 
 output "update_kubeconfig" {
-  value = "ams eks --region ${var.region} update-kubeconfig ${module.eks-cluster.cluster_id}"
+  value = "aws eks update-kubeconfig --region ${var.region} --name ${module.eks-cluster.cluster_id}"
 }

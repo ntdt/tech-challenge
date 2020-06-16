@@ -46,13 +46,13 @@ Edit `terraform.tfvars` to specify the number of `worker_count`, `region`, `vpc_
 
 - `make upload`: upload images to filestore EC2 instance
 
-- `make install_csi`: Install AWS EFS CSI driver for k8s cluster
+- `make install-csi`: Install AWS EFS CSI driver for k8s cluster
 
 - `make run`: launch Jobs to process images
 
 - `make download`: download images processed to *result*
 
-- `make prepare_prometheus` then `make prometheus` to install Prometheus to ingest metrics from k8s cluster
+- `make prepare-prometheus` then `make prometheus` to install Prometheus to ingest metrics from k8s cluster
 
 - `make dashboard` install k8s dashboard
 

@@ -30,14 +30,14 @@ download:
 ssh:
 	$(shell terraform output  ssh_connection_string)
 
-install_csi:
+install-csi:
 	kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
 
 run:
 	kubectl apply -f specs/
 
 .PHONY: prepare_prometheus prometheus
-prepare_prometheus:
+prepare-prometheus:
 	kubectl create namespace prometheus
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 	helm repo update
@@ -53,3 +53,6 @@ dashboard:
 
 logging:
 	kubectl apply -f logging
+
+destroy:
+	terraform destroy

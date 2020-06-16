@@ -41,9 +41,12 @@ module "vpc" {
     cidrsubnet(module.subnet_addrs.network_cidr_blocks["public"], 2, num)
   ]
 
-  single_nat_gateway   = true
-  enable_nat_gateway   = true
+  single_nat_gateway     = true
+  enable_nat_gateway     = true
+  one_nat_gateway_per_az = false
+
   enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
     Terraform   = "true"
@@ -63,6 +66,7 @@ module "vpc" {
 
 module "eks-cluster" {
   source          = "terraform-aws-modules/eks/aws"
+  version         = "12.1.0"
   cluster_name    = "${var.namespace}-cluster"
   cluster_version = "1.16"
   subnets         = module.vpc.private_subnets
@@ -72,8 +76,8 @@ module "eks-cluster" {
 
   worker_groups = [
     {
-      instance_type = "m4.large"
-      asg_max_size  = 3
+      instance_type        = "m4.large"
+      asg_desired_capacity = 2
     }
   ]
 }
@@ -81,13 +85,17 @@ module "eks-cluster" {
 module "efs" {
   source = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.16.0"
 
-  namespace       = "${var.namespace}"
-  stage           = "test"
-  name            = "app"
-  region          = var.region
-  vpc_id          = module.vpc.vpc_id
-  subnets         = module.vpc.private_subnets
-  security_groups = [module.eks-cluster.worker_security_group_id]
+  namespace = "${var.namespace}"
+  stage     = "test"
+  name      = "app"
+  region    = var.region
+  vpc_id    = module.vpc.vpc_id
+  subnets   = module.vpc.private_subnets
+
+  security_groups = [
+    module.eks-cluster.worker_security_group_id,
+    module.ssh_sg.this_security_group_id
+  ]
 }
 
 data "aws_ami" "amzn_linux" {
